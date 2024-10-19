@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigation Bar</title>
+<style>
+    body {
+        background-color: #333; /* Dark background for contrast */
+        font-family: 'Arial', sans-serif; /* Modern sans-serif font */
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
+	.nav-container {
+		display: flex; /* Enable flexbox */
+		flex-direction: column; /* Stack children vertically */
+		align-items: center; /* Center children horizontally */
+		background-color: #4a4a4a; /* Dark grey background */
+		width: 100%; /* Adjust width as needed */
+		padding: 40px 20px; /* Adjust top and bottom padding as needed */
+		border-radius: 5px; /* Slightly rounded corners */
+		box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Optional: Adds shadow for depth */
+		margin: auto; /* Center the container in the available space */
+		height: 100vh; /* Full height of the viewport */
+	}
+    .nav-item, .nav-title {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+    .nav-item {
+        margin-bottom: 10px;
+        padding-left: 40px; /* This will be the space for the icon plus the indentation you want for the text */
+    }
+    .nav-item::before {
+        content: '';
+        display: inline-block;
+        width: 28px; /* Width of the icon */
+        height: 28px; /* Height of the icon */
+        background-image: url('https://customdigital.me/files/notion/icons/sprout/grey_box.gif');
+        background-size: cover;
+        margin-right: 10px; /* Space between the icon and the text */
+    }
+    .nav-title {
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    .nav-title::before {
+        content: '';
+        display: inline-block;
+        width: 28px; /* Width of the icon */
+        height: 28px; /* Height of the icon */
+        background-image: url('https://customdigital.me/files/notion/icons/sprout/red_box.gif');
+        background-size: cover;
+        margin-right: 10px; /* Space between the icon and the text */
+    }
+</style>
+</head>
+<body>
+
+<div class="nav-container">
+    <div class="nav-title">Sprout Network</div>
+    <div class="nav-item">
+        Marketing Plan
+    </div>
+    <div class="nav-item">
+        Launch Budget
+    </div>
+    <!-- Add additional nav-items here following the same pattern -->
+</div>
+
+</body>
+</html>

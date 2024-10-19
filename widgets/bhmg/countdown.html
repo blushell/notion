@@ -1,0 +1,147 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CountDown Timer</title>
+        <!-- <link rel="stylesheet" href="style.css"> -->
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+                    'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+                margin: 0;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.5;
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: left;
+            }
+
+            body.center {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .box {
+                margin-top: 2px;
+                background-color: #252525;
+                /* margin-left: 12px; */
+                border-radius: 4px;
+                width: 100%;
+            }
+
+            #timer {
+                text-transform: uppercase;
+                font-size: 0.7em;
+                letter-spacing: 5px;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .years,
+            .months,
+            .weeks,
+            .days,
+            .hours,
+            .minutes,
+            .seconds {
+                display: inline-block; /* Change display to inline-block */
+                padding: 20px 10px;
+            }
+
+            .days {
+                color: #FAA5F9;
+            }
+
+            .hours {
+                color: #FAA5F9;
+            }
+
+            .minutes {
+                color: #FAA5F9;
+            }
+
+            .seconds {
+                color: #FAA5F9;
+            }
+
+            .numbers {
+                font-weight: bold;
+                font-size: 3em;
+                text-align: center;
+                color: #8DA7FC;
+            }
+        </style>     
+    </head>
+    <body class="center">
+        <div class="box">
+            <div id="timer">
+                <div class="days">
+                    <div id="days" class="numbers"></div> 
+                    <span>days</span>
+                </div>
+                <div class="hours">
+                    <div id="hours" class="numbers"></div>
+                    <span>hours</span>
+                </div>
+                <div class="minutes">
+                    <div id="minutes" class="numbers"></div>
+                    <span>minutes</span>
+                </div>
+                <div class="seconds">
+                    <div id="seconds" class="numbers"></div>
+                    <span>seconds</span>
+                </div>
+            </div>
+        </div>
+    </body>
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const countdownDateParam = urlParams.get('date');
+            
+            const padLeft = (num) => {
+                if (String(num).length > 1) {
+                    return num;
+                }
+                return String("0" + num);
+            }
+            
+            if (countdownDateParam) {
+                const myDate = new Date(countdownDateParam);
+                
+                const timerElement = document.getElementById("timer");
+                const messageElement = document.createElement("div");
+                messageElement.classList.add("message");
+                
+                setInterval(function () {
+                    const today = new Date().getTime();
+                    const diff = (myDate - today) < 0 ? 0 : (myDate - today);
+                    
+                    if (diff === 0) {
+                        timerElement.style.display = "none";
+                        messageElement.innerHTML = "LAUNCH DATE! 🚀🥳";
+                        timerElement.parentNode.appendChild(messageElement);
+                    } else {
+                        timerElement.style.display = "block";
+                        messageElement.innerHTML = "";
+                        
+                        const seconds = Math.floor(diff / 1000);
+                        const minutes = Math.floor(seconds / 60);
+                        const hours = Math.floor(minutes / 60);
+                        const days = Math.floor(hours / 24);
+                        
+                        document.getElementById("days").innerHTML = padLeft(days);
+                        document.getElementById("hours").innerHTML = padLeft(hours % 24);
+                        document.getElementById("minutes").innerHTML = padLeft(minutes % 60);
+                        document.getElementById("seconds").innerHTML = padLeft(seconds % 60);
+                    }
+                }, 1000);
+            } else {
+                document.getElementById("timer").innerHTML = "Invalid date parameter";
+            }
+        </script>
+</html>
