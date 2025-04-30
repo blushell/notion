@@ -1,146 +1,178 @@
-<!-- ?date=2024-09-05T00:00:00.000Z -->
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CountDown Timer</title>
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-		margin: 0;
-		font-size: 16px;
-		font-weight: 400;
-		line-height: 1.5;
-		width: 100vw;
-		height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		text-align: left;
-        background-color: #f1f1ef;
-	}
-	body.center {
-		justify-content: center;
-		text-align: center;
-	}
-	
-	.box {
-		margin-top: 12px;
-		
-		margin-left: 12px;
-		border-radius: 4px;
-		width: 100%;
-	}
-	  
-	#timer {
-		text-transform: uppercase;
-		font-size: .7em;
-		letter-spacing: 5px;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-	}
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>CountDown Timer</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.2.1/moment.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+		<style>
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+					'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji',
+					'Segoe UI Symbol';
+				margin: 0;
+				padding: 0;
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
 
-      .years,
-      .months,
-      .weeks,
-      .days,
-      .hours,
-      .minutes,
-      .seconds {
-		display: inline-block; /* Change display to inline-block */
-		padding: 20px 10px;
-      }
+			.container {
+				width: 100%;
+				max-width: 800px;
+				margin: 0 auto;
+				text-align: center;
+				background-color: #f1f1ef;
+				border-radius: 12px;
+				padding: 20px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+			}
 
-      .days {
-        color: #D44C47;
-      }
+			.timer-table {
+				width: 100%;
+				border-collapse: collapse;
+				table-layout: fixed;
+			}
 
-      .hours {
-        color: #D44C47;
-      }
+			.timer-cell {
+				padding: 0 5px;
+				text-align: center;
+				width: calc(100% / 6);
+			}
 
-      .minutes {
-        color: #D44C47;
-      }
+			.number {
+				font-size: 2.5em;
+				font-weight: bold;
+				display: block;
+				margin-bottom: 2px;
+				color: #37352f;
+			}
 
-      .seconds {
-        color: #D44C47;
-      }
+			.label {
+				color: #d44c47;
+				text-transform: uppercase;
+				font-size: 0.7em;
+				letter-spacing: 1px;
+			}
 
-      .numbers {
-        font-weight: bold;
-        font-size: 3em;
-        text-align: center;
-		color: #37352f;
-      }
-    </style>
-</head>
+			@media (max-width: 768px) {
+				.timer-table {
+					font-size: 14px;
+				}
+				.number {
+					font-size: 2em;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<table class="timer-table">
+				<tr>
+					<td class="timer-cell">
+						<span id="months" class="number">00</span>
+						<span class="label">months</span>
+					</td>
+					<td class="timer-cell">
+						<span id="weeks" class="number">00</span>
+						<span class="label">weeks</span>
+					</td>
+					<td class="timer-cell">
+						<span id="days" class="number">00</span>
+						<span class="label">days</span>
+					</td>
+					<td class="timer-cell">
+						<span id="hours" class="number">00</span>
+						<span class="label">hours</span>
+					</td>
+					<td class="timer-cell">
+						<span id="minutes" class="number">00</span>
+						<span class="label">minutes</span>
+					</td>
+					<td class="timer-cell">
+						<span id="seconds" class="number">00</span>
+						<span class="label">seconds</span>
+					</td>
+				</tr>
+			</table>
+		</div>
 
-<body class="center">
-<div class="box">
-<div id="timer">
-    <div class="days">
-      <div id="days" class="numbers"></div>
-      days
-    </div>
-    <div class="hours">
-      <div id="hours" class="numbers"></div>
-      hours
-    </div>
-    <div class="minutes">
-      <div id="minutes" class="numbers"></div>
-      minutes
-    </div>
-    <div class="seconds">
-      <div id="seconds" class="numbers"></div>
-      seconds
-    </div>
-</div>
-</div>
-<script>
-const urlParams = new URLSearchParams(window.location.search);
-const countdownDateParam = urlParams.get('date');
+		<script>
+			const urlParams = new URLSearchParams(window.location.search);
+			const countdownDateParam = urlParams.get('date');
 
-const padLeft = (num) => {
-    if (String(num).length > 1) {
-        return num;
-    }
-    return String("0" + num);
-}
+			const padLeft = (num) => {
+				return String(num).padStart(2, '0');
+			};
 
-if (countdownDateParam) {
-    const myDate = new Date(countdownDateParam);
-    
-    const timerElement = document.getElementById("timer");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message");
-    
-    setInterval(function () {
-        const today = new Date().getTime();
-        const diff = (myDate - today) < 0 ? 0 : (myDate - today);
-        
-        if (diff === 0) {
-            timerElement.style.display = "none";
-            messageElement.innerHTML = "LAUNCH DATE! 🚀🥳";
-            timerElement.parentNode.appendChild(messageElement);
-        } else {
-            timerElement.style.display = "block";
-            messageElement.innerHTML = "";
-            
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            
-            document.getElementById("days").innerHTML = padLeft(days);
-            document.getElementById("hours").innerHTML = padLeft(hours % 24);
-            document.getElementById("minutes").innerHTML = padLeft(minutes % 60);
-            document.getElementById("seconds").innerHTML = padLeft(seconds % 60);
-        }
-    }, 1000);
-} else {
-    document.getElementById("timer").innerHTML = "Invalid date parameter";
-}
-</script>
+			if (countdownDateParam) {
+				const myDate = new Date(countdownDateParam);
+				const startDate = moment(myDate);
+				const timerElement = document.getElementById('timer');
+				const messageElement = document.createElement('div');
+				messageElement.classList.add('message');
+
+				setInterval(function () {
+					const today = moment();
+					let diff = moment.duration(startDate.diff(today));
+
+					if (diff.asMilliseconds() <= 0) {
+						timerElement.style.display = 'none';
+						messageElement.innerHTML = 'LAUNCH DATE! 🚀🥳';
+						timerElement.parentNode.appendChild(messageElement);
+						triggerConfetti();
+					} else {
+						timerElement.style.display = 'block';
+						messageElement.innerHTML = '';
+
+						const months = Math.floor(diff.asMonths());
+						diff = diff.subtract(months, 'months');
+
+						const weeks = Math.floor(diff.asWeeks());
+						diff = diff.subtract(weeks, 'weeks');
+
+						const days = Math.floor(diff.asDays());
+						diff = diff.subtract(days, 'days');
+
+						const hours = Math.floor(diff.asHours());
+						diff = diff.subtract(hours, 'hours');
+
+						const minutes = Math.floor(diff.asMinutes());
+						diff = diff.subtract(minutes, 'minutes');
+
+						const seconds = Math.floor(diff.asSeconds());
+
+						// Update the HTML elements
+						document.getElementById('months').innerHTML = padLeft(months);
+						document.getElementById('weeks').innerHTML = padLeft(weeks);
+						document.getElementById('days').innerHTML = padLeft(days);
+						document.getElementById('hours').innerHTML = padLeft(hours);
+						document.getElementById('minutes').innerHTML = padLeft(minutes);
+						document.getElementById('seconds').innerHTML = padLeft(seconds);
+					}
+				}, 1000);
+			} else {
+				document.getElementById('timer').innerHTML = 'Invalid date parameter';
+			}
+
+			let confettiCount = 0;
+			function triggerConfetti() {
+				if (confettiCount <= 3) {
+					confetti({
+						particleCount: 100,
+						spread: 70,
+						origin: { y: 0.6 },
+					});
+					confettiCount++;
+
+					// Schedule next confetti burst if not reached limit
+					if (confettiCount < 3) {
+						setTimeout(triggerConfetti, 1000); // Fire next burst after 1 second
+					}
+				}
+			}
+		</script>
+	</body>
 </html>
