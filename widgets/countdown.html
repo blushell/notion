@@ -108,15 +108,14 @@
 			};
 
 			if (countdownDateParam) {
-				const myDate = new Date(countdownDateParam);
-				const startDate = moment(myDate);
-				const timerElement = document.getElementById('timer');
+				const targetDate = moment(countdownDateParam);
+				const timerElement = document.querySelector('.timer-table');
 				const messageElement = document.createElement('div');
 				messageElement.classList.add('message');
 
 				setInterval(function () {
-					const today = moment();
-					let diff = moment.duration(startDate.diff(today));
+					const now = moment();
+					const diff = moment.duration(targetDate.diff(now));
 
 					if (diff.asMilliseconds() <= 0) {
 						timerElement.style.display = 'none';
@@ -124,25 +123,15 @@
 						timerElement.parentNode.appendChild(messageElement);
 						triggerConfetti();
 					} else {
-						timerElement.style.display = 'block';
+						timerElement.style.display = 'table';
 						messageElement.innerHTML = '';
 
-						const months = Math.floor(diff.asMonths());
-						diff = diff.subtract(months, 'months');
-
-						const weeks = Math.floor(diff.asWeeks());
-						diff = diff.subtract(weeks, 'weeks');
-
-						const days = Math.floor(diff.asDays());
-						diff = diff.subtract(days, 'days');
-
-						const hours = Math.floor(diff.asHours());
-						diff = diff.subtract(hours, 'hours');
-
-						const minutes = Math.floor(diff.asMinutes());
-						diff = diff.subtract(minutes, 'minutes');
-
-						const seconds = Math.floor(diff.asSeconds());
+						const months = diff.months();
+						const weeks = Math.floor(diff.days() / 7);
+						const days = diff.days() % 7;
+						const hours = diff.hours();
+						const minutes = diff.minutes();
+						const seconds = diff.seconds();
 
 						// Update the HTML elements
 						document.getElementById('months').innerHTML = padLeft(months);
@@ -154,12 +143,13 @@
 					}
 				}, 1000);
 			} else {
-				document.getElementById('timer').innerHTML = 'Invalid date parameter';
+				document.querySelector('.timer-table').innerHTML =
+					'Invalid date parameter';
 			}
 
 			let confettiCount = 0;
 			function triggerConfetti() {
-				if (confettiCount <= 3) {
+				if (confettiCount < 3) {
 					confetti({
 						particleCount: 100,
 						spread: 70,
